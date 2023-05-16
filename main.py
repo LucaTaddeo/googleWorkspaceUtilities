@@ -1,11 +1,21 @@
-import time, os
+import time, os 
+from auth import loginAndInitializeService
+
+service = None
 
 def welcome_script():
+    global service
     os.system('clear')
     print("\n" + "-"*75)
     print("| Welcome to the Google Workspace Utils script!")
     print("-"*75 + "\n\n")
     time.sleep(0.5)
+
+    print("\n" + "-"*3 + "Auth" + "-"*(75-4))
+    print("| Initializing authentication process...")
+    time.sleep(1)
+    service = loginAndInitializeService()
+    print("-"*75 + "\n\n")
 
     while True: 
         print("\n" + "-"*3 + "Supported functions" + "-"*(72-19))
