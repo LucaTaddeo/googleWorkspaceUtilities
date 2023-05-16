@@ -1,6 +1,7 @@
 import time, os 
 from auth import loginAndInitializeService
 from users import getAndPrintAllUsers
+from groups import getAndPrintAllGroups
 from constants import maxRowLength
 
 service = None
@@ -34,7 +35,7 @@ def welcome_script():
             getAndPrintAllUsers(service)
             time.sleep(2)
         elif choice == "2":
-            print("2")
+            getAndPrintAllGroups(service)
             time.sleep(2)
         elif choice == "3":
             print("3")
