@@ -1,8 +1,10 @@
 import time, os 
 from auth import loginAndInitializeService
-from users import getAndPrintAllUsers
-from groups import getAndPrintAllGroups
+from users import getAllUsers, printFormattedUsers
+from groups import getAllGroups, printFormattedGroups
+from members import getMembersFromGroupName
 from constants import maxRowLength
+from utils import printBoxAndAskUser, printTitle, printClosure
 
 service = None
 
@@ -32,13 +34,20 @@ def welcome_script():
         print("-"*maxRowLength + "\n")
         
         if choice == "1":
-            getAndPrintAllUsers(service)
+            printTitle("Users")
+            printFormattedUsers(getAllUsers(service))
+            printClosure()
             time.sleep(2)
         elif choice == "2":
-            getAndPrintAllGroups(service)
+            printTitle("Groups")
+            printFormattedGroups(getAllGroups(service))
+            printClosure()
             time.sleep(2)
         elif choice == "3":
-            print("3")
+            name = printBoxAndAskUser(title="Group Name", label="Enter group name")
+            printTitle("Members of "+name)
+            printFormattedUsers(getMembersFromGroupName(service, name))
+            printClosure()
             time.sleep(2)
         elif choice == "q":
             print("\n" + "-"*maxRowLength)
