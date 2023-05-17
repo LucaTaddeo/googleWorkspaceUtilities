@@ -1,4 +1,5 @@
 from constants import maxRowLength
+from utils import getColoredText
 
 def getAllGroups(service):
     results = service.groups().list(customer='my_customer').execute()
@@ -8,7 +9,7 @@ def getAndPrintAllGroups(service):
     print("\n" + "-"*3 + "Groups" + "-"*(maxRowLength-7-3))
     groups = getAllGroups(service)
     if not groups:
-        print('| No groups in the domain.')
+        print("| " + getColoredText("No groups found!", "yellow"))
     else:
         print(u'| {0} Groups:'.format(len(groups)))
         for group in groups:
@@ -24,7 +25,7 @@ def getGroupByName(service, name):
 
 def printFormattedGroups(groups):
     if not groups:
-        print('| No groups found!')
+        print("| " + getColoredText("No groups found!", "yellow"))
     else:
         for group in groups:
             printSingleGroup(group)
