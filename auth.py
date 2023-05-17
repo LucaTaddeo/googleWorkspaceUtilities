@@ -52,9 +52,7 @@ def loginWithDomainLevelServiceAccount(serviceName, serviceVersion, email=defaul
         if delegated_user is None:
             raise Exception("Delegated credentials for "+email+" failed!")
         print("| "+getColoredText("Delegated credentials for "+email+ getColoredText(" created!", "bold"), ["green"]))
-        print("| ")
         return delegated_user
     except: 
         print("| "+getColoredText("Delegated credentials for "+email+ getColoredText(" failed!", "bold"), ["red"]))
-        print("| ")
         return None
