@@ -65,7 +65,7 @@ def welcome_script():
             #ask for background color  
             printTitle("Add "+calendarId+" to "+email)
             res = addCalendarToUser(email, calendarId)
-            print("| " + res) if res is not None else None
+            print(u'| {0}'.format(res)) if res is not None else None
             print("| ")
             printCalendarList(getCalendarListFromUserEmail(email))
             printClosure()
