@@ -1,10 +1,12 @@
+from utils import getColoredText
+
 def getAllUsers(service): 
     results = service.users().list(customer='my_customer', maxResults=500, orderBy='email').execute()
     return results.get('users', [])
 
 def printFormattedUsers(users):
     if not users:
-        print('| No users found!')
+        print("| " + getColoredText("No users found!", "yellow"))
     else:
         for user in users:
             printSingleUser(user)
