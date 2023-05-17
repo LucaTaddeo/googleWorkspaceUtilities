@@ -2,12 +2,12 @@ import time, os
 from constants import maxRowLength
 from utils import printBoxAndAskUser, printTitle, printClosure
 
-from auth import loginWithOAuthToken, loginWithDomainLevelServiceAccount
+from auth import loginWithOAuthToken
 
 from users import getAllUsers, printFormattedUsers
 from groups import getAllGroups, printFormattedGroups
 from members import getMembersFromGroupName
-from calendars import getCalendarListFromUserEmail, printCalendarList
+from calendars import getCalendarListFromUserEmail, printCalendarList, addCalendarToUser
 
 directoryService = None
 
@@ -19,18 +19,19 @@ def welcome_script():
     print("-"*maxRowLength + "\n\n")
     time.sleep(0.5)
 
-    print("\n" + "-"*3 + "Auth" + "-"*(maxRowLength-4-3))
+    printTitle("Auth")
     print("| Initializing authentication process...\n|")
     time.sleep(1)
     directoryService = loginWithOAuthToken("admin", "directory_v1")
     print("-"*maxRowLength + "\n\n")
 
     while True: 
-        print("\n" + "-"*3 + "Supported functions" + "-"*(maxRowLength-19-3))
-        print("| [1] Get All Users")
-        print("| [2] Get All Groups")
-        print("| [3] Get All Members of a Group")
-        print("| [4] Get All Calendars of a User")
+        printTitle("Main Menu")
+        print("| [1] List Users")
+        print("| [2] List Groups")
+        print("| [3] List Members of Group")
+        print("| [4] List Calendars of User")
+        print("| [5] Add Calendar to User")
         print("| [q] Quit")
 
         
@@ -56,6 +57,16 @@ def welcome_script():
         elif choice == "4":
             email = printBoxAndAskUser(title="User Email", label="Enter user email")
             printTitle("Calendars of "+email)
+            printCalendarList(getCalendarListFromUserEmail(email))
+            printClosure()
+        elif choice == "5":
+            email = printBoxAndAskUser(title="User Email", label="Enter user email")
+            calendarId = printBoxAndAskUser(title="Calendar Id", label="Enter calendar id")
+            #ask for background color  
+            printTitle("Add "+calendarId+" to "+email)
+            res = addCalendarToUser(email, calendarId)
+            print("| " + res) if res is not None else None
+            print("| ")
             printCalendarList(getCalendarListFromUserEmail(email))
             printClosure()
         elif choice == "q":
