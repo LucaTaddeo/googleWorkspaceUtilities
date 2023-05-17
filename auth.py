@@ -7,6 +7,7 @@ from googleapiclient.discovery import build
 from google.oauth2 import service_account
 
 from constants import defaultEmail
+from utils import getColoredText
 
 SCOPES = [
     "https://www.googleapis.com/auth/admin.directory.user",
@@ -36,7 +37,7 @@ def loginWithOAuthToken(serviceName, serviceVersion):
             token.write(creds.to_json())
 
     # Initialize an admin service with given credentials
-    print("| Authentication for "+serviceName+" succeeded!")
+    print("| "+getColoredText("OAauth2 Authentication for "+serviceName+ getColoredText(" succeeded!", "bold"), ["green"]))
     return build(serviceName, serviceVersion, credentials=creds)
 
 
@@ -45,5 +46,15 @@ def loginWithDomainLevelServiceAccount(serviceName, serviceVersion, email=defaul
     credentials = service_account.Credentials.from_service_account_file(
         "credentials/serviceAccount_credentials.json", scopes=SCOPES)
     delegated_credentials = credentials.with_subject(email) 
-    print("| Creating delegated credentials for "+email+"\n|")
-    return build(serviceName, serviceVersion, credentials=delegated_credentials)
+    print("| Creating delegated credentials for "+email)
+    try: 
+        delegated_user = build(serviceName, serviceVersion, credentials=delegated_credentials)
+        if delegated_user is None:
+            raise Exception("Delegated credentials for "+email+" failed!")
+        print("| "+getColoredText("Delegated credentials for "+email+ getColoredText(" created!", "bold"), ["green"]))
+        print("| ")
+        return delegated_user
+    except: 
+        print("| "+getColoredText("Delegated credentials for "+email+ getColoredText(" failed!", "bold"), ["red"]))
+        print("| ")
+        return None
