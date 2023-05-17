@@ -23,3 +23,10 @@ ansiColors = {
     "bg_cyan": "\033[46m",
     "bg_white": "\033[47m"
 }
+
+aclRoles = {
+    "f": "freeBusyReader",
+    "r": "reader",
+    "w": "writer",
+    "o": "owner",
+}
