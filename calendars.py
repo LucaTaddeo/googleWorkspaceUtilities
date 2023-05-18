@@ -1,4 +1,3 @@
-from auth import loginWithDomainLevelServiceAccount
 from utils import getColoredText
 
 def getCalendarListFromUserEmail(service, userEmail):
@@ -8,7 +7,7 @@ def getCalendarListFromUserEmail(service, userEmail):
         print("| "+getColoredText("Unable to get calendars for "+getColoredText(userEmail, "bold"), "red"))
 
 def printCalendarList(calendars):
-    if not calendars:
+    if not calendars: 
         print("| " + getColoredText("No calendars found!", "yellow"))
     else: 
         for calendar in calendars: 
@@ -19,12 +18,15 @@ def printSingleCalendar(calendar):
 
 def addCalendarToUser(service, calendarId):
     try:
-        return service.calendarList().insert(body={"id": calendarId}).execute()
+        res = service.calendarList().insert(body={"id": calendarId}).execute()
+        print("| " + getColoredText(u'Calendar {0} added to user with access role {1}'
+                                    .format(res['summary'], res['accessRole']), "green"))
+        return res
     except:
         print("| "+getColoredText("Error: Impossible to add the calendar to the calendarList!", "red"))
 
 def createAccessControlRule(service, userEmail, calendarId, role="reader", scope="user"):
-    print("| Creating ACL Rule...")
+    print("| Creating ACL Rule for "+userEmail+"...")
     try:
         rule = {
             'scope': {
@@ -35,7 +37,7 @@ def createAccessControlRule(service, userEmail, calendarId, role="reader", scope
         }
 
         res = service.acl().insert(calendarId=calendarId, body=rule).execute()
-        print("| " + getColoredText(u'ACL Rule for {0} {1} with role {2} created'
+        print("| " + getColoredText(u'ACL Rule for {0} {1} with access role {2} created'
                                     .format(res['scope']['type'], res['scope']['value'], res['role']), "green"))
         return res
     except: 
