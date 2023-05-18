@@ -23,6 +23,13 @@ def getGroupByName(service, name):
             return group
     return None
 
+def getGroupByEmail(service, email):
+    groups = service.groups().list(customer='my_customer').execute().get('groups', [])
+    for group in groups:
+        if group['email'] == email:
+            return group
+    return None
+
 def printFormattedGroups(groups):
     if not groups:
         print("| " + getColoredText("No groups found!", "yellow"))
@@ -31,5 +38,5 @@ def printFormattedGroups(groups):
             printSingleGroup(group)
 
 def printSingleGroup(group):
-    print(u'| [{2}] {0} - {1} '.format(group['name'], group['email'], group['id']))
+    print(u'| [ID: {2}] {0} - {1} '.format(group['name'], group['email'], group['id']))
 
