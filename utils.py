@@ -18,8 +18,7 @@ def printBoxAndAskUser(title, label):
     printClosure()
     return choice
 
-def printBoxAndAskUserWithOptions(title, label, options, text=None):
-    printTitle(title)
+def askUserWithOptions(label, options, text=None):
     if text is not None:
         print("| " + text)
     choice = None
@@ -29,6 +28,11 @@ def printBoxAndAskUserWithOptions(title, label, options, text=None):
             break
         else:
             print("| Invalid option, please try again!")
+    return choice
+
+def printBoxAndAskUserWithOptions(title, label, options, text=None):
+    printTitle(title)
+    choice = askUserWithOptions(label, options, text)
     printClosure()
     return choice
 
