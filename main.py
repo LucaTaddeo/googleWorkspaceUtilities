@@ -1,13 +1,10 @@
 import time, os 
-from constants import maxRowLength, aclRoles
-from utils import printBoxAndAskUser, printTitle, printClosure, printBoxAndAskUserWithOptions
+from constants import maxRowLength
+from utils import printTitle, printClosure
 
 from auth import loginWithOAuthToken, loginWithDomainLevelServiceAccount
 
-from users import getAllUsers, printFormattedUsers
-from groups import getAllGroups, printFormattedGroups
-from members import getMembersFromGroupName
-from calendars import getCalendarListFromUserEmail, printCalendarList, addCalendarToUser, createAccessControlRule
+from mainFunctions import listUsers, listGroups, listMembersOfGroup, listCalendarsOfUser, addCalendar, createACLRule, addCalendarAndACLRuleToGroup, quit
 
 directoryService = None
 calendarService = None
@@ -44,61 +41,35 @@ def welcome_script():
         print("| [4] List Calendars of User")
         print("| [5] Add Calendar to User")
         print("| [6] Create ACL Rule")
+        print("| [7] Add calendar and ACL rule to group")
         print("| [q] Quit")
         
         choice = input("|\n| Enter your choice: ")
         print("-"*maxRowLength + "\n")
         
         if choice == "1":
-            printTitle("Users")
-            printFormattedUsers(getAllUsers(directoryService))
-            printClosure()
+            listUsers(directoryService)
             time.sleep(2)
         elif choice == "2":
-            printTitle("Groups")
-            printFormattedGroups(getAllGroups(directoryService))
-            printClosure()
+            listGroups(directoryService)
             time.sleep(2)
         elif choice == "3":
-            name = printBoxAndAskUser(title="Group Name", label="Enter group name")
-            printTitle("Members of "+name)
-            printFormattedUsers(getMembersFromGroupName(directoryService, name))
-            printClosure()
+            listMembersOfGroup(directoryService)
             time.sleep(2)
         elif choice == "4":
-            email = printBoxAndAskUser(title="User Email", label="Enter user email")
-            delegatedService = getDelegatedService(email)
-            printTitle("Calendars of "+email)
-            printCalendarList(getCalendarListFromUserEmail(delegatedService, email))
-            printClosure()
+            listCalendarsOfUser()
+            time.sleep(2)
         elif choice == "5":
-            email = printBoxAndAskUser(title="User Email", label="Enter user email")
-            delegatedService = getDelegatedService(email)
-            calendarId = printBoxAndAskUser(title="Calendar Id", label="Enter calendar id")
-            #ask for background color  
-            printTitle("Add "+calendarId+" to "+email)
-            res = addCalendarToUser(email, calendarId)
-            print(u'| {0}'.format(res)) if res is not None else None
-            print("| ")
-            print("| Calendar list of "+email+" after the addition: ")
-            printCalendarList(getCalendarListFromUserEmail(email))
-            printClosure()
+            addCalendar(calendarService)
+            time.sleep(2)
         elif choice == "6":
-            email = printBoxAndAskUser(title="User Email", label="Enter email of user")
-            calendarId = printBoxAndAskUser(title="Calendar Id", label="Enter calendar id")
-            role = aclRoles.get(printBoxAndAskUserWithOptions(
-                title="Role", 
-                label="Enter role [ r | w | o | f ]", 
-                options=aclRoles.keys(), 
-                text="Available roles are: [r]eader, [w]riter, [o]wner or [f]ree and busy reader"
-            ))
-            printTitle("Create ACL rule for "+email)
-            res = createAccessControlRule(calendarService, email, calendarId, role)
-            printClosure()
+            createACLRule(calendarService)
+            time.sleep(2)
+        elif choice == "7":
+            addCalendarAndACLRuleToGroup(directoryService, calendarService)
+            time.sleep(2)
         elif choice == "q":
-            print("\n" + "-"*maxRowLength)
-            print("| Quitting the program, goodbye! ")
-            print("-"*maxRowLength + "\n")
+            quit()
             break
         else:
             print("Invalid choice. Please try again.")
