@@ -30,3 +30,9 @@ aclRoles = {
     "w": "writer",
     "o": "owner",
 }
+
+aclScopeTypes = {
+    "g": "group",
+    "u": "user",
+    "d": "domain",
+}
