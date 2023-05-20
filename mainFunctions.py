@@ -43,10 +43,19 @@ def addCalendar(calendarService):
     calendarId = printBoxAndAskUser(title="Calendar Id", label="Enter calendar id")
     printTitle("Add "+calendarId+" to "+email)
     print("| Adding calendar to "+email+"...")
-    addCalendarToUser(delegatedService, calendarId)
+    res = addCalendarToUser(delegatedService, calendarId)
+    print("| Fetching calendars of "+email+"...")
+    calendars = getCalendarListFromUserEmail(delegatedService, email)
+    for cal in calendars:
+        if cal['id'] == calendarId:
+            print("| " + getColoredText(u'Calendar {0} added to user with access role {1}'
+                                    .format(res['summary'], res['accessRole']), "green"))
+            break
+    else:
+        print("| "+getColoredText("Unable to add calendar to "+email+"!", "red"))
     print("| ")
     print("| Calendar list of "+email+" after the addition: ")
-    printCalendarList(getCalendarListFromUserEmail(delegatedService, email))
+    printCalendarList(calendars)
     print("| ")
     if askUserWithOptions(
         label="[ y | n ]", 

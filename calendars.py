@@ -18,10 +18,7 @@ def printSingleCalendar(calendar):
 
 def addCalendarToUser(service, calendarId):
     try:
-        res = service.calendarList().insert(body={"id": calendarId}).execute()
-        print("| " + getColoredText(u'Calendar {0} added to user with access role {1}'
-                                    .format(res['summary'], res['accessRole']), "green"))
-        return res
+        return service.calendarList().insert(body={"id": calendarId}).execute()
     except:
         print("| "+getColoredText("Error: Impossible to add the calendar to the calendarList!", "red"))
 
