@@ -16,11 +16,26 @@ def printCalendarList(calendars):
 def printSingleCalendar(calendar): 
     print(u'| [ID: {0}] {1}'.format(calendar['id'], calendar['summary']))
 
-def addCalendarToUser(service, calendarId):
+def addCalendarToUser(service, calendarId, colors=None):
     try:
-        return service.calendarList().insert(body={"id": calendarId}).execute()
+        if colors is None or colors['backgroundColor'] == "" or colors['foregroundColor'] == "":
+            return service.calendarList().insert(body={"id": calendarId, "selected": True}).execute()
+        else: 
+            return service.calendarList().insert(body={
+                "id": calendarId, 
+                "colorRgbFormat": True, 
+                "backgroundColor": colors['backgroundColor'], 
+                "foregroundColor": colors['foregroundColor'],
+                "selected": True
+                }).execute()
     except:
         print("| "+getColoredText("Error: Impossible to add the calendar to the calendarList!", "red"))
+
+def removeCalendarFromUser(service, calendarId):
+    try:
+        return service.calendarList().delete(calendarId=calendarId).execute()
+    except:
+        print("| "+getColoredText("Error: Impossible to remove the calendar from the calendarList!", "red"))
 
 def createAccessControlRule(service, userEmail, calendarId, role="reader", scope="user"):
     print("| Creating ACL Rule for "+userEmail+"...")
