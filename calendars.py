@@ -16,16 +16,14 @@ def printCalendarList(calendars):
 def printSingleCalendar(calendar): 
     print(u'| [ID: {0}] {1}'.format(calendar['id'], calendar['summary']))
 
-def addCalendarToUser(service, calendarId, colors=None):
+def addCalendarToUser(service, calendarId, colorId=None):
     try:
-        if colors is None or colors['backgroundColor'] == "" or colors['foregroundColor'] == "":
+        if colorId is None or colorId == "":
             return service.calendarList().insert(body={"id": calendarId, "selected": True}).execute()
         else: 
             return service.calendarList().insert(body={
                 "id": calendarId, 
-                "colorRgbFormat": True, 
-                "backgroundColor": colors['backgroundColor'], 
-                "foregroundColor": colors['foregroundColor'],
+                "colorId": colorId, 
                 "selected": True
                 }).execute()
     except:

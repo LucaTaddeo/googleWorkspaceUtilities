@@ -12,17 +12,14 @@ def askForColors():
     printTitle("Colors")
     askForColors = askUserWithOptions(label="Do you want to set colors for the calendars? [ y | n ]", options=["y", "n"], text="If you don't set colors, the default color will be used")
     if askForColors == "y":
-        print("| Colors are in hexadecimal format (e.g. #4285F4)")
-        bgColor = input("| Enter background color: ")
-        fgColor = input("| Enter foreground color: ")
-        printClosure()
-        if bgColor == "":
-            print("| Background color not set, default colors will be used")
-            return None
-        if fgColor == "":
-            fgColor = "#000000"
-            print("| Foreground color not set, white will be used")
-        return {"backgroundColor": bgColor, "foregroundColor": fgColor}
+        print("| ")
+        print("| Available colors: ")
+        print("| 1: Copper, 2: Terra Cotta, 3: Flame, 4: Tangerine, 5: Orange Peel, 6: Yellow Orange, 7: Mint, 8: Jungle Green,")
+        print("| 9: Meadow Green, 10: Lime Green, 11: Daffodil, 12: Goldenrod, 13: Turquoise, 14: Sky Blue, 15: Cornflower Blue, 16: Cerulean,")
+        print("| 17: Lavender, 18: Amethyst, 19: Cool Gray, 20: Rose Quartz, 21: Blush, 22: Pink Flamingo, 23: Orchid, 24: Wisteria")
+        print("| ")
+        bgColor = input("| Enter colorId: ")
+        return bgColor
     else:
         print("| Default colors will be used")
         printClosure()
@@ -62,10 +59,10 @@ def addCalendar(calendarService):
     email = printBoxAndAskUser(title="User Email", label="Enter user email")
     delegatedService = getDelegatedService(email)
     calendarId = printBoxAndAskUser(title="Calendar Id", label="Enter calendar id")
-    colors = askForColors()
+    colorId = askForColors()
     printTitle("Add "+calendarId+" to "+email)
     print("| Adding calendar to "+email+"...")
-    res = addCalendarToUser(delegatedService, calendarId, colors=colors)
+    res = addCalendarToUser(delegatedService, calendarId, colorId=colorId)
     print("| Fetching calendars of "+email+"...")
     calendars = getCalendarListFromUserEmail(delegatedService, email)
     for cal in calendars:
@@ -117,7 +114,7 @@ def createACLRule(calendarService):
 
 def addCalendarAndACLRuleToGroup(directoryService, calendarService): 
     calendarId = printBoxAndAskUser(title="Calendar Id", label="Enter calendar id")
-    colors = askForColors()
+    colorId = askForColors()
     groupEmail = printBoxAndAskUser(title="Group Email", label="Enter group email")
     role = aclRoles.get(printBoxAndAskUserWithOptions(
         title="Access Role for the Group", 
@@ -141,7 +138,7 @@ def addCalendarAndACLRuleToGroup(directoryService, calendarService):
             delegatedService = getDelegatedService(user['email'])
             printTitle("["+str(i+1)+"/"+str(len(users))+"] Add Calendar to "+user['email'])
             print("| Adding calendar to "+user['email']+"...")
-            addCalendarToUser(delegatedService, calendarId, colors=colors)
+            addCalendarToUser(delegatedService, calendarId, colorId=colorId)
             calendars = getCalendarListFromUserEmail(delegatedService, user['email'])
             for cal in calendars:
                 if cal['id'] == calendarId:
