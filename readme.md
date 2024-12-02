@@ -4,7 +4,9 @@ Utility Repo containing helper functions for Google Workspace, using the Workspa
 ## Required libraries
 This application requires the Google API Python Client Library, as well as the Auth HTTPlib and OAuthlib. To install them, use the following command:
 
-`pip3 install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib`
+`pip3 install google-api-python-client google-auth-httplib2 google-auth-oauthlib`
+
+You might need to add the `--break-system-packages` property.
 
 ## Authentication
 The functionality of this application requires authentication. To set it up, follow the steps in the following paragraphs.

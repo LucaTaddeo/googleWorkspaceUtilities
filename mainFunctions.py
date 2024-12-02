@@ -1,3 +1,5 @@
+import json
+import os
 from constants import maxRowLength, aclRoles, aclScopeTypes
 from utils import printBoxAndAskUser, printTitle, printClosure, printBoxAndAskUserWithOptions, askUserWithOptions, getColoredText
 
@@ -7,6 +9,19 @@ from users import getAllUsers, printFormattedUsers
 from groups import getAllGroups, printFormattedGroups
 from members import getMembersFromGroupEmail
 from calendars import getCalendarListFromUserEmail, printCalendarList, addCalendarToUser, createAccessControlRule, removeCalendarFromUser
+
+import sys
+from contextlib import contextmanager
+from io import StringIO
+
+@contextmanager
+def silencedPrints():
+    original_stdout = sys.stdout
+    try:
+        sys.stdout = StringIO()  # Redirect stdout to a buffer
+        yield
+    finally:
+        sys.stdout = original_stdout  # Restore original stdout
 
 def askForColors():
     printTitle("Colors")
@@ -152,6 +167,61 @@ def addCalendarAndACLRuleToGroup(directoryService, calendarService):
         printClosure()
     else: 
         print("| "+getColoredText("Canceled adding calendar to users in "+groupEmail+"...", "yellow"))
+        printClosure()
+
+def autoAddEachCalendarToEachGroup(directoryService, calendarService):
+    printTitle("Initializing auto-add")
+    print("| This process will add each calendar with read properties to each group.")
+    print("| You can handle the pairing from the input.json file!")
+    role = aclRoles.get("r") 
+    if askUserWithOptions(
+        label="[ y | n ]", 
+        options=["y", "n"], 
+        text="Do you want to continue?"
+    ) == "y":
+        if not os.path.exists("input.json"):
+            print("| "+getColoredText("input.json file not found!", "red"))
+            printClosure()
+        else:
+            printClosure()
+            with open("input.json", "r") as file:
+                groupsAndCalendars = json.load(file)
+                groupsAndCalendarsLength = str(len(groupsAndCalendars))
+
+                for i, groupAndCalendar in enumerate(groupsAndCalendars):
+                    calCounter = "[" + str(i + 1) + "/" + groupsAndCalendarsLength + "] "
+                    printTitle(calCounter + "Adding Calendar to " + groupAndCalendar['groupEmail'])
+                    calendarId = groupAndCalendar['calendarId']
+                    groupEmail = groupAndCalendar['groupEmail']
+                    print("| Calendar Id: " + calendarId)
+                    print("| Group Email: " + groupEmail)
+                    print("| ")
+                    print("| Fetching group information...")
+                    users = getMembersFromGroupEmail(directoryService, groupEmail)
+                    
+                    usersLength = str(len(users))
+                    print("| " + usersLength + " users found in " + groupEmail)
+                    print("| ")
+                    
+                    for j, user in enumerate(users):
+                        with silencedPrints():
+                            delegatedService = getDelegatedService(user['email'])
+                        userCounter = "[" + str(j + 1) + "/" + usersLength + "] "
+                        print("| " + userCounter + "Adding calendar to " + user['email'] + "...")
+                        addCalendarToUser(delegatedService, calendarId)
+                        calendars = getCalendarListFromUserEmail(delegatedService, user['email'])
+                        for cal in calendars:
+                            if cal['id'] == calendarId:
+                                break
+                        else:
+                            print("| "+getColoredText("Unable to add calendar to "+user['email']+"!", "red"))
+                    print("| ")
+                    createAccessControlRule(calendarService, groupEmail, calendarId, role, scope="group")
+                    print("| ") 
+                    print("| " + getColoredText("Calendar added to users in" + groupEmail + "!", "green"))
+                    printClosure()
+    else: 
+        print("| " + getColoredText("Canceled auto-add process...", "yellow"))
         printClosure()
         
 def removeCalendarFromGroup(directoryService, calendarService):

@@ -4,7 +4,7 @@ from utils import printTitle, printClosure
 
 from auth import loginWithOAuthToken, loginWithDomainLevelServiceAccount
 
-from mainFunctions import listUsers, listGroups, listMembersOfGroup, listCalendarsOfUser, addCalendar, createACLRule, addCalendarAndACLRuleToGroup, removeCalendarFromGroup, quit
+from mainFunctions import listUsers, listGroups, listMembersOfGroup, listCalendarsOfUser, addCalendar, createACLRule, addCalendarAndACLRuleToGroup, autoAddEachCalendarToEachGroup, removeCalendarFromGroup, quit
 
 directoryService = None
 calendarService = None
@@ -43,6 +43,7 @@ def welcome_script():
         print("| [6] Create ACL Rule")
         print("| [7] Add calendar and ACL rule to group")
         print("| [8] Remove calendar from group")
+        print("| [9] Auto-add each calendar to each group")
         print("| [q] Quit")
         
         choice = input("|\n| Enter your choice: ")
@@ -71,6 +72,9 @@ def welcome_script():
             time.sleep(2)
         elif choice == "8":
             removeCalendarFromGroup(directoryService, calendarService)
+            time.sleep(2)
+        elif choice == "9":
+            autoAddEachCalendarToEachGroup(directoryService, calendarService)
             time.sleep(2)
         elif choice == "q":
             quit()
